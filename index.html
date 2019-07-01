@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Reactive Programming</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/custom-styles.css">
+
+    <!-- Code syntax highlighting -->
+		<!-- <link rel="stylesheet" href="lib/css/monokai.css"> -->
+		<link rel="stylesheet" href="lib/css/github.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>Reactive programming</section>
+				<section>What reactive programming is</section>
+				<section>Frontend usage</section>
+				<section>Java usage</section>
+
+        <section class="past" style="top: 65.5px; display: block;" hidden="" aria-hidden="true">
+            <h3>Observable stream</h3>
+            <pre>
+								<code data-trim="" class="java hljs">
+									public class Observable {
+									    Subscription subscribe(Observer observer) { ... }
+									}
+
+									public interface Observer {
+									    void onCompleted();
+									    void onError(error);
+									    void onNext(value);
+									}
+
+									public interface Subscription {
+									    void unsubscribe();
+									    boolean isUnsubscribed();
+									}
+	            </code>
+						</pre>
+        </section>
+        <section class="future" style="top: 161.5px; display: block;" hidden="" aria-hidden="true">
+            <h3>Operators</h3>
+            <ul style="width:30%;float:left;margin-left:25%;">
+                <li>map</li>
+                <li>reduce</li>
+                <li>filter</li>
+                <li>scan</li>
+                <li>flatMap</li>
+            </ul>
+            <ul style="width:40%;float:left;">
+                <li>merge</li>
+                <li>zip</li>
+                <li>switch</li>
+                <li>and many more...</li>
+                <li class="fragment" data-fragment-index="0">many many many more</li>
+            </ul>
+        </section>
+				<section>
+            <iframe class="marble-container" src="rxmarbles.html?type=filter" frameborder="0"></iframe>
+        </section>
+
+        <section>
+            <iframe class="marble-container" src="rxmarbles.html?type=map" frameborder="0"></iframe>
+        </section>
+
+        <section>
+            <iframe class="marble-container" src="rxmarbles.html?type=debounce" frameborder="0"></iframe>
+        </section>
+
+        <section>
+            <iframe class="marble-container" src="rxmarbles.html?type=merge" frameborder="0"></iframe>
+        </section>
+
+        <section>
+            <iframe class="marble-container" src="rxmarbles.html?type=zip" frameborder="0"></iframe>
+        </section>
+
+        <section>
+            <iframe class="marble-container" src="rxmarbles.html?type=reduce" frameborder="0"></iframe>
+        </section>
+
+				<section>
+          <div class="cols">
+              <div class="col">
+                  <pre><code class="code javascript" contenteditable data-trim>
+										const source = Rx.Observable
+										  .interval(1000)
+										  .take(5)
+
+										source.subscribe(
+										  (x) => print("x = " + x)
+										);
+                    </code></pre>
+                </div>
+                <div class="col output">
+                    <pre></pre>
+                </div>
+            </div>
+            <div>
+                <button class="button" onclick="runCode(this)">&#9654;&nbsp; Run</button>
+            </div>
+        </section>
+
+        <section>
+            <div class="cols">
+                <div class="col">
+                    <pre><code class="code javascript" contenteditable data-trim>
+											Rx.Observable
+											  .fromEvent(document, 'keyup')
+											  .map(event => event.keyCode)
+											  .filter(key => key > 47 && key < 91)
+											  .map(key => String.fromCharCode(key))
+											  .subscribe(key =>
+											    print(`You pressed: ${key}`))
+                    </code></pre>
+                </div>
+                <div class="col output">
+                    <pre></pre>
+                </div>
+            </div>
+            <div>
+                <button class="button" onclick="runCode(this)">&#9654;&nbsp; Run</button>
+            </div>
+        </section>
+
+        <section>
+            <div class="cols">
+                <div class="col">
+                    <pre><code class="code javascript" contenteditable data-trim>
+											const click$ = Rx.Observable
+												.fromEvent(document, 'click')
+
+											const clickCount$ = click$
+												.buffer(() => click$.debounce(500))
+												.map(events => events.length)
+
+											clickCount$
+												.filter(count => count == 1)
+												.subscribe(() =>
+													print('Nice click'))
+
+											clickCount$
+												.filter(count => count == 2)
+												.subscribe(() =>
+													print('Wow, such doubleclick!'))
+
+											clickCount$
+												.filter(count => count > 2)
+												.subscribe(() =>
+													print('So many click, much WOW!!1!'))
+                    </code></pre>
+                </div>
+                <div class="col output">
+                    <pre></pre>
+                </div>
+            </div>
+            <div>
+                <button class="button" onclick="runCode(this)">&#9654;&nbsp; Run</button>
+            </div>
+        </section>
+
+
+				<section>
+					http://cvuorinen.github.io/reactive-programming-slides/#/
+				</section>
+			</div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+		<script src="js/jquery.min.js"></script> <!-- copy from node_modules/jquery/dist/jquery.min.js -->
+    <script src="js/babel.min.js"></script> <!-- copy from node_modules/babel-standalone/babel.min.js -->
+    <script src="js/rx.all.min.js"></script> <!-- copy from node_modules/rx/dist/rx.all.min.js -->
+    <script src="js/custom-scripts.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true}
+				]
+			});
+
+		</script>
+	</body>
+</html>
